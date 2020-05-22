@@ -86,3 +86,7 @@ opts <- r$tune(train_data, opts = list(dim = c(10, 20, 30),
 
 # Train the algorithm  
 r$train(train_data, opts = c(opts$min, nthread = 6, niter = 20))
+
+y_hat <-  r$predict(test_data, out_memory())
+
+RMSE(test_set$rating, y_hat)
