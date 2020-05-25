@@ -90,10 +90,13 @@ train_set%>%
   geom_density(color="#69b3a2", fill="#69b3a2")+
   ggtitle("Win placement density")
 
+#improving Win placement viz
 train_set%>%
   ggplot(aes(winPlacePerc)) +
   geom_histogram(bins = 20, color="white", fill="#69b3a2") +
   ggtitle("Win placement density")
+
+###########################
 
 train_set%>%
   ggplot(aes(walkDistance)) +
@@ -173,6 +176,7 @@ train_set %>%
   geom_point()+
   geom_smooth(method = "loess") +
   ggtitle("Match ranking with head shots")
+
 
 
 
