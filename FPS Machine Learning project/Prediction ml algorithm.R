@@ -26,7 +26,10 @@
 library(tidyverse)
 library(data.table)
 library(caret)
+library(h2o)
 
+#options and set up
+conn_h2o<- h2o.init(nthreads = -2)
 
 #Load Data if needed
 
@@ -77,4 +80,13 @@ train<- train_set[-val_index,]
 #since the target value can be any valu from 0 to 1 we can try
 #a liner model to predict it 
 
-lm_fit <- train(winPlacePerc ~)
+
+glm_fit <- train(winPlacePerc ~ walkDistance + rideDistance + 
+                               swimDistance + avgDistPerMinute +
+                               kills + matchDuration + 
+                               assists + boosts + 
+                               killPoints + winPoints +
+                               numGroups + headshotKills +
+                               teamwork + itemsFound ,
+                               method = "glm" , data = train)
+ 
