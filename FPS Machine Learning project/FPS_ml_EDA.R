@@ -178,5 +178,18 @@ train_set %>%
   ggtitle("Match ranking with head shots")
 
 
+#Explore if the number of teams during the same game influence the final ranking
+
+summary(train_set$numGroups)
+
+#what happen when there is only one team in the game?
+
+train_set %>%
+  filter(numGroups == 1) %>%
+  mutate(groupId = order(groupId)) %>%
+  group_by(matchId) %>% 
+  select(matchId, groupId, winPlacePerc, numGroups) %>%
+  head(20)
+
 
 
