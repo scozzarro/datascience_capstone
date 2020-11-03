@@ -71,7 +71,60 @@ orders %>%
   count(order_number)%>%
   ggplot(aes(order_number,n)) +
   geom_line(color="#69b3a2", size = 1) +
-  ylab('number of customer')
+  ylab('number of customers')
   
+
+mean_1to2<- orders %>%
+            filter(order_number == 2) %>%
+            summarise(mean(days_since_prior_order))
   
+mean_1to2<- mean_1to2[1,1]
+
+mean_2to3<- orders %>%
+  filter(order_number == 3) %>%
+  summarise(mean(days_since_prior_order))
+
+mean_2to3<- mean_2to3[1,1]
+
+mean_3to4<- orders %>%
+  filter(order_number == 4) %>%
+  summarise(mean(days_since_prior_order))
+
+mean_3to4<- mean_3to4[1,1]
+
+mean_4to5<- orders %>%
+  filter(order_number == 5) %>%
+  summarise(mean(days_since_prior_order))
+
+mean_4to5<- mean_4to5[1,1]
+
+
+#What people order###########
+
+# most ordered item
+orders_by_product<- merge(order_products, products, by = 'product_id')
+
+top10_product<- orders_by_product %>%
+                group_by(product_name)%>%
+                count(product_id)
+
+
+top10_product<- top10_product[order(top10_product$n, decreasing = TRUE),]
+top10_product<- top10_product[1:10,]
+
+top10_product %>%
+  ggplot(aes(x=product_name,y=n)) +
+  geom_segment(aes(x=product_name, xend=product_name, y=0, yend=n), color='grey') +
+  geom_point(color="#69b3a2", size = 4) +
+  theme_light() +
+  coord_flip()
+
+#cart size
+cart= orders_by_product %>%
+       group_by(order_id) %>%
+       summarise(cart_variety =product_id, cart_size = add_to_cart_order)
+
+cartsize<- cart %>%
+           group_by(order_id) %>%
+           summarise(variance=n_distinct(cart_variety), size=sum(cart_size))
 
