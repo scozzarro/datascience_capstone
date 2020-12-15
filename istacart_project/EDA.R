@@ -271,3 +271,18 @@ treemap(tmp2, index = c('department', 'aisle'), vSize = 'onesize', vColor = 'dep
 treemap(tmp,index=c("department","aisle"),vSize="n",title="",palette="Set3",border.col="white")
 
 treemap(tmp2,index=c("department","aisle"),vSize="sumcount",title="",palette="Set3",border.col="white")
+
+#Exploring customer habits
+tmp <- order_products_prior %>% 
+  group_by(order_id) %>% 
+  summarize(m = mean(reordered),n=n()) %>% 
+  right_join(filter(orders,order_number>2), by="order_id")
+
+tmp2 <- tmp %>% 
+  filter(eval_set =="prior") %>% 
+  group_by(user_id) %>% 
+  summarize(n_equal = sum(m==1,na.rm=T), percent_equal = n_equal/n()) %>% 
+  filter(percent_equal == 1) %>% 
+  arrange(desc(n_equal))
+
+datatable(tmp2, class="table-condensed", style="bootstrap", options = list(dom = 'tp'))
