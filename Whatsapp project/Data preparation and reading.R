@@ -108,6 +108,8 @@ mychat %>% mutate(text_len = nchar(text)) %>%
            theme_minimal() +
            theme(legend.title = element_blank(), legend.position = 'bottom')
 
+#3.5 Emojis ----
+
 #What are the most used emojis in chat?
 # LIBRARY FOR EMOJI PNG IMAGE FETCH FROM https://abs.twimg.com
 library(ggimage) # EMOJI RANKING
@@ -131,4 +133,64 @@ emojiplot %>% ggplot(aes(reorder(emoji_name, n), n)) +
               coord_flip() +
               theme_minimal() +
               theme()
-            
+
+#What are the most used emojis in chat per user?
+emojiplot2<- mychat %>% 
+             unnest(c(emoji, emoji_name)) %>%
+             mutate(emoji = str_sub(emoji, end = 1))%>%
+             count(author, emoji, emoji_name, sort = TRUE) %>%
+             group_by(author) %>%
+             top_n(8, n) %>%
+             slice(1:8) %>%
+             mutate(emoji_url = map_chr(emoji, ~paste0('https://abs.twimg.com/emoji/v2/72x72/', 
+                                                        as.hexmode(utf8ToInt(.x)),'.png')))
+emojiplot2 %>% ggplot(aes(reorder(emoji, -n), n)) +
+               geom_col(aes(fill = author, group = author), show.legend = FALSE, width = .20) +
+               geom_image(aes(image = emoji_url), size = .08) +
+               xlab('Emiji') +
+               ylab('Number of time emoji was used') +
+               facet_wrap(~author, ncol = 5, scales = 'free') +
+               ggtitle('Most used emoji by user') +
+               theme_minimal() +
+               theme(axis.text.x = element_blank())
+
+#3.6 Most used words ----
+useless_words<-c('il','lo','la','un','uno','una','quello','quella','quelli','nostro','vostro','di','quanto','che','se','sono',
+                 'loro','alla','alle','niente','meno','piu','qui','qua','con','voi','chi','mio','tuo','va','ma','è','stata',
+                 'per', 'nn','a','le','te','in','e','sto','da','sei','me','ho','ha','mi','we','per','non','sta','o','fra',
+                 'su','so','hai','ci','mo','sn','eh','ti','c3','i','fa','al','ne','del')
+
+mychat %>% unnest_tokens(input = text, output = word) %>%
+           filter(!word %in% useless_words) %>%
+           count(word) %>%
+           top_n(30, n) %>%
+           arrange(desc(n)) %>%
+           ggplot(aes(reorder(word, n), n, fill = n, color = n)) +
+           geom_col(show.legend = FALSE, width = .1) +
+           geom_point(show.legend = FALSE, size = 3) +
+           ggtitle('Most used words in chat') +
+           xlab('Words') +
+           ylab('Number of time it was used') +
+           coord_flip() +
+           theme_minimal()
+
+#Most used words in chat, by user
+mychat %>% unnest_tokens(input = text, output = word) %>%
+           filter(!word %in% useless_words) %>%
+           count(author, word, sort = TRUE) %>%
+           group_by(author) %>%
+           top_n(20, n) %>%
+           slice(1:20) %>%
+           ungroup() %>%
+           arrange(author, desc(n)) %>%
+           mutate(order = row_number()) %>%
+           ggplot(aes(reorder(word, n), n, fill = author, color = author)) +
+           geom_col(show.legend = FALSE, width = .1) +
+           geom_point(show.legend = FALSE, size = 3) +
+           xlab('Words') +
+           ylab('Number of time it was used') +
+           coord_flip() +
+           facet_wrap(~author, ncol = 3, scales = 'free') +
+           ggtitle('Most used words by user') +
+           theme_minimal()
+           
