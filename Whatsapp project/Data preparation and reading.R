@@ -17,6 +17,9 @@ str(mychat)
 
 mychat<- mychat[-1,] #delete first raw with whatsapp privacy encoding disclaimer
 
+mychat$author<- as.character(mychat$author)
+mychat$author[mychat$author != "Andrea Marciano"] <- "G"
+mychat$author<- as.factor(mychat$author)                     
 
 
 mychat<- mychat %>% 
