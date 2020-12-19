@@ -5,7 +5,7 @@ library(lubridate)
 library(tidyverse)
 library(tidytext)
 library(kableExtra)
-library(RColorBrewer)
+library(knitr)
 
 #1. Import chat ----
 mychat<- rwa_read('chat_A_G.txt')
@@ -16,9 +16,6 @@ str(mychat)
 
 mychat<- mychat[-1,] #delete first raw with whatsapp privacy encoding disclaimer
 
-mychat$author<- as.character(mychat$author)
-mychat$author[mychat$author != "Andrea Marciano"] <- "G"
-mychat$author<- as.factor(mychat$author)                     
 
 
 mychat<- mychat %>% 
