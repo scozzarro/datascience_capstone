@@ -6,7 +6,6 @@ library(tidyverse)
 library(tidytext)
 library(kableExtra)
 library(RColorBrewer)
-library(knitr)
 
 #1. Import chat ----
 mychat<- rwa_read('chat_A_G.txt')
