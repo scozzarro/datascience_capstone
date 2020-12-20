@@ -28,11 +28,11 @@ mychat %>% unnest_tokens(input = text, output = word) %>%
 
 #1.2 Unic word per author ----
 unic_words_G<- mychat %>% unnest_tokens(input = text, output = word) %>%
-                          filter(author != "G") %>%
+                          filter(author != "Gabriel") %>%
                           count(word, sort = TRUE)
 
 mychat %>%  unnest_tokens(input = text, output = word) %>%
-            filter(author == "G") %>%
+            filter(author == "Gabriel") %>%
             count(word, sort = TRUE) %>%
             filter(!word %in% unic_words_G$word) %>%
             top_n(15, n) %>%
@@ -40,7 +40,7 @@ mychat %>%  unnest_tokens(input = text, output = word) %>%
             geom_col(show.legend = FALSE) +
             ylab("Number of times used") +
             coord_flip() +
-            ggtitle("Top used word for G")
+            ggtitle("Top used word for Gabriel")
 
 unic_words_A<- mychat %>% unnest_tokens(input = text, output = word) %>%
                           filter(author != "Andrea Marciano") %>%

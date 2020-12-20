@@ -6,6 +6,7 @@ library(tidyverse)
 library(tidytext)
 library(kableExtra)
 library(knitr)
+library(ggimage)
 
 #1. Import chat ----
 mychat<- rwa_read('chat_A_G.txt')
@@ -106,7 +107,6 @@ mychat %>% mutate(text_len = nchar(text)) %>%
 
 #What are the most used emojis in chat?
 # LIBRARY FOR EMOJI PNG IMAGE FETCH FROM https://abs.twimg.com
-library(ggimage) # EMOJI RANKING
 
 emojiplot<- mychat %>% 
             unnest(c(emoji, emoji_name)) %>%
@@ -130,23 +130,23 @@ emojiplot %>% ggplot(aes(reorder(emoji_name, n), n)) +
 
 #What are the most used emojis in chat per user?
 emojiplot2<- mychat %>% 
-             unnest(c(emoji, emoji_name)) %>%
-             mutate(emoji = str_sub(emoji, end = 1))%>%
-             count(author, emoji, emoji_name, sort = TRUE) %>%
-             group_by(author) %>%
-             top_n(8, n) %>%
-             slice(1:8) %>%
-             mutate(emoji_url = map_chr(emoji, ~paste0('https://abs.twimg.com/emoji/v2/72x72/', 
-                                                        as.hexmode(utf8ToInt(.x)),'.png')))
+  unnest(c(emoji, emoji_name)) %>%
+  mutate(emoji = str_sub(emoji, end = 1))%>%
+  count(author, emoji, emoji_name, sort = TRUE) %>%
+  group_by(author) %>%
+  top_n(8, n) %>%
+  slice(1:8) %>%
+  mutate(emoji_url = map_chr(emoji, ~paste0('https://abs.twimg.com/emoji/v2/72x72/', 
+                                            as.hexmode(utf8ToInt(.x)),'.png')))
 emojiplot2 %>% ggplot(aes(reorder(emoji, -n), n)) +
-               geom_col(aes(fill = author, group = author), show.legend = FALSE, width = .20) +
-               geom_image(aes(image = emoji_url), size = .08) +
-               xlab('Emiji') +
-               ylab('Number of time emoji was used') +
-               facet_wrap(~author, ncol = 5, scales = 'free') +
-               ggtitle('Most used emoji by user') +
-               theme_minimal() +
-               theme(axis.text.x = element_blank())
+  geom_col(aes(fill = author, group = author), show.legend = FALSE, width = .20) +
+  geom_image(aes(image = emoji_url), size = .08) +
+  xlab('Emiji') +
+  ylab('Number of time emoji was used') +
+  facet_wrap(~author, ncol = 5, scales = 'free') +
+  ggtitle('Most used emoji by user') +
+  theme_minimal() +
+  theme(axis.text.x = element_blank())
 
 #3.6 Most used words ----
 useless_words<-c('il','lo','la','un','uno','una','quello','quella','quelli','nostro','vostro','di','quanto','che','se','sono',
