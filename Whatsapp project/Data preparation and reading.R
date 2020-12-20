@@ -14,7 +14,7 @@ mychat<- rwa_read('chat_A_G.txt')
 summary(mychat)
 str(mychat)
 
-mychat<- mychat[-1,] #delete first raw with whatsapp privacy encoding disclaimer
+mychat<- mychat[-c(1:14),] #delete first raw with whatsapp privacy encoding disclaimer
 
 
 
@@ -25,19 +25,7 @@ mychat$author<- as.factor(mychat$author)
 
 mychat<- mychat %>% 
          mutate(day = date(time))%>%
-         mutate(season = case_when(
-                                   day >= dmy(05012017) & day <= dmy(31032017) ~ 'Winter 2017',
-                                   day >= dmy(01042017) & day <= dmy(21062017) ~ 'Spring 2017',
-                                   day >= dmy(22062017) & day <= dmy(23092017) ~ 'Summer 2017',
-                                   day >= dmy(24092017) & day <= dmy(20122017) ~ 'Autumn 2017',
-                                   day >= dmy(21122017) & day <= dmy(31032018) ~ 'Winter 2018',
-                                   day >= dmy(01042018) & day <= dmy(21062018) ~ 'Spring 2018',
-                                   day >= dmy(22062018) & day <= dmy(23092018) ~ 'Summer 2018',
-                                   day >= dmy(24092018) & day <= dmy(20122018) ~ 'Autumn 2018',
-                                   day >= dmy(21122018) & day <= dmy(31032019) ~ 'Winter 2019',
-                                   day >= dmy(01042019) & day <= dmy(21062019) ~ 'Spring 2019',
-                                   day >= dmy(22062019) & day <= dmy(23092019) ~ 'Summer 2019',
-                                   day >= dmy(24092019) & day <= dmy(20122019) ~ 'Autumn 2019',
+         mutate(season = case_when(day >= dmy(24092019) & day <= dmy(20122019) ~ 'Autumn 2019',
                                    day >= dmy(21122019) & day <= dmy(31032020) ~ 'Winter 2020',
                                    day >= dmy(01042020) & day <= dmy(21062020) ~ 'Spring 2020',
                                    day >= dmy(22062020) & day <= dmy(23092020) ~ 'Summer 2020',
