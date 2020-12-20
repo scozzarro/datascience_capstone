@@ -1,0 +1,107 @@
+---
+title: "Whatsapp sentiment analysis project"
+author: "Gabriel Scozzarro"
+date: "19/12/2020"
+output: pdf_document
+mainfont: Arial
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## 1. Introduction
+This project aim to perform a sentiment analysis on the content of a Whatsapp chat based on words and emoji used.
+
+## 2. Toolbox
+
+Importing the libraries that the project will use.
+
+````{r lib, warning = FALSE, error = FALSE, message = FALSE}
+library(rwhatsapp)
+library(lubridate)
+library(tidyverse)
+library(tidytext)
+library(kableExtra)
+library(knitr)
+````
+
+
+## 3. Preparation and reading data
+
+After importing the contet of the chat as dataframe, some operation were performed:
+1. Delete first row with the Whatsapp privicy disclaimer
+2. Change one chat user name to simplify usage in code
+3. Create a new feature to assign to each messages the correct season
+
+````{r}
+mychat<- rwa_read('chat_A_G.txt')
+````
+This is the preview of the content inside our dataframe after the processing:
+````{r echo = FALSE}
+mychat<- mychat[-1,] #delete first raw with whatsapp privacy encoding disclaimer
+
+
+
+mychat$author<- as.character(mychat$author)
+mychat$author[mychat$author != "Andrea Marciano"] <- "Gabriel"
+mychat$author<- as.factor(mychat$author)    
+
+
+mychat<- mychat %>% 
+         mutate(day = date(time))%>%
+         mutate(season = case_when(
+                                   day >= dmy(05012017) & day <= dmy(31032017) ~ 'Winter 2017',
+                                   day >= dmy(01042017) & day <= dmy(21062017) ~ 'Spring 2017',
+                                   day >= dmy(22062017) & day <= dmy(23092017) ~ 'Summer 2017',
+                                   day >= dmy(24092017) & day <= dmy(20122017) ~ 'Autumn 2017',
+                                   day >= dmy(21122017) & day <= dmy(31032018) ~ 'Winter 2018',
+                                   day >= dmy(01042018) & day <= dmy(21062018) ~ 'Spring 2018',
+                                   day >= dmy(22062018) & day <= dmy(23092018) ~ 'Summer 2018',
+                                   day >= dmy(24092018) & day <= dmy(20122018) ~ 'Autumn 2018',
+                                   day >= dmy(21122018) & day <= dmy(31032019) ~ 'Winter 2019',
+                                   day >= dmy(01042019) & day <= dmy(21062019) ~ 'Spring 2019',
+                                   day >= dmy(22062019) & day <= dmy(23092019) ~ 'Summer 2019',
+                                   day >= dmy(24092019) & day <= dmy(20122019) ~ 'Autumn 2019',
+                                   day >= dmy(21122019) & day <= dmy(31032020) ~ 'Winter 2020',
+                                   day >= dmy(01042020) & day <= dmy(21062020) ~ 'Spring 2020',
+                                   day >= dmy(22062020) & day <= dmy(23092020) ~ 'Summer 2020',
+                                   day >= dmy(24092020) & day <= dmy(15122020) ~ 'Autumn 2020'
+                                   ))
+
+mychat$season<- factor(mychat$season)
+
+mychat %>% head(10) %>% kable('latex', digits = 10, booktabs = T) %>% kable_styling(full_width = FALSE, font_size = 11, latex_options = c("striped", 'condensed','scale_down')) %>% column_spec(3, width = "25em")
+````
+
+## 4. EDA
+
+I start the exploration and the data analysis looking for the daily messages frequency divided by season
+
+```{r daily freq, echo=FALSE}
+#Messages per seasons 
+mychat %>% group_by(season) %>%
+           count(day) %>%
+           ggplot(aes(day, n, fill = season)) +
+           geom_bar(stat = 'identity') +
+           ylab('Numbers of messages') +
+           xlab('season') +
+           ggtitle('Messages per Seasons') +
+           theme_minimal() +
+           theme(legend.position = 'bottom')
+```
+Then I explore the frequency of messages per day of week and also the frequency of messages per hour of the day.
+
+````{r freq week, echo = FALSE}
+#Messages per day of week
+mychat %>% mutate(wday_num = wday(day), wday_name = weekdays(day)) %>%
+           group_by(season, wday_num, wday_name) %>%
+           count() %>%
+           ggplot(aes(reorder(wday_name, -wday_num), n, fill = season)) +
+           geom_bar(stat = 'identity') +
+           xlab('') +
+           coord_flip() +
+           ggtitle('Messages per day of week', 'Frequency per seasons') +
+           theme_minimal() +
+           theme(legend.title = element_blank(), legend.position = 'bottom')
+
+````
