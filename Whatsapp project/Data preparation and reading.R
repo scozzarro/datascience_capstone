@@ -16,8 +16,10 @@ str(mychat)
 
 mychat<- mychat[-1,] #delete first raw with whatsapp privacy encoding disclaimer
 
+
+
 mychat$author<- as.character(mychat$author)
-mychat$author[mychat$author != "Andrea Marciano"] <- "G"
+mychat$author[mychat$author != "Andrea Marciano"] <- "Gabriel"
 mychat$author<- as.factor(mychat$author)    
 
 
@@ -44,6 +46,8 @@ mychat<- mychat %>%
 
 mychat$season<- factor(mychat$season)
 
+mychat %>% head(10) %>% kable() %>% kable_styling(font_size = 11, bootstrap_options = c("striped", 'condensed'))
+
 #3. EDA ----
 
 #3.1 Messages per seasons ----
@@ -57,7 +61,7 @@ mychat %>% group_by(season) %>%
            theme_minimal() +
            theme(legend.position = 'bottom')
 
-#3.2 Messages per day of week
+#3.2 Messages per day of week ----
 mychat %>% mutate(wday_num = wday(day), wday_name = weekdays(day)) %>%
            group_by(season, wday_num, wday_name) %>%
            count() %>%
