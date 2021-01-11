@@ -189,29 +189,3 @@ mychat %>% unnest_tokens(input = text, output = word) %>%
            theme_minimal()
            
 
-# Translate ----
-
-library(translateR)
-
-my.api.key<- ''
-
-google.dataset.out <- translate(dataset = mychat,
-                                content.field = 'text',
-                                google.api.key = my.api.key,
-                                source.lang = 'it',
-                                target.lang = 'en')
-
-
-# Sentiment analysis SetimentR ----
-library(sentimentr)
-
-(chat_sentiment <- with(
-  google.dataset.out, 
-  sentiment_by(
-    get_sentences(translatedContent), 
-    list(author)
-  )
-))
-
-plot(chat_sentiment)
-
