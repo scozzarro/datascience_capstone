@@ -193,7 +193,7 @@ mychat %>% unnest_tokens(input = text, output = word) %>%
 
 library(translateR)
 
-my.api.key<- 'AIzaSyDM6ECAgGrz4Qx1Yd0ptalRUPi_TRuu9Ac'
+my.api.key<- ''
 
 google.dataset.out <- translate(dataset = mychat,
                                 content.field = 'text',
