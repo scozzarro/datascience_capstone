@@ -188,3 +188,30 @@ mychat %>% unnest_tokens(input = text, output = word) %>%
            ggtitle('Most used words by user') +
            theme_minimal()
            
+
+# Translate ----
+
+library(translateR)
+
+my.api.key<- 'AIzaSyDM6ECAgGrz4Qx1Yd0ptalRUPi_TRuu9Ac'
+
+google.dataset.out <- translate(dataset = mychat,
+                                content.field = 'text',
+                                google.api.key = my.api.key,
+                                source.lang = 'it',
+                                target.lang = 'en')
+
+
+# Sentiment analysis SetimentR ----
+library(sentimentr)
+
+(chat_sentiment <- with(
+  google.dataset.out, 
+  sentiment_by(
+    get_sentences(translatedContent), 
+    list(author)
+  )
+))
+
+plot(chat_sentiment)
+
